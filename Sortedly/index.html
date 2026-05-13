@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sortedly – Organize Better, Stress Less</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #faf7ff;
+    --surface: #ffffff;
+    --surface2: #f3effe;
+    --sidebar-bg: #2d2040;
+    --sidebar-hover: #3a2d54;
+    --accent: #a78bfa;
+    --accent-dark: #7c3aed;
+    --accent2: #c4b5fd;
+    --text: #1e1030;
+    --text2: #7c6fa0;
+    --border: #e8dffe;
+    --danger: #f43f5e;
+    --success: #34d399;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(124,58,237,0.07);
+    --shadow-lg: 0 12px 40px rgba(124,58,237,0.13);
+    --transition: 0.22s cubic-bezier(.4,0,.2,1);
+    --cat-home-bg: #fce7f3; --cat-home-border: #fbcfe8; --cat-home-text: #9d174d;
+    --cat-work-bg: #dbeafe; --cat-work-border: #bfdbfe; --cat-work-text: #1e40af;
+    --cat-event-bg: #fef3c7; --cat-event-border: #fde68a; --cat-event-text: #92400e;
+    --cat-school-bg: #d1fae5; --cat-school-border: #a7f3d0; --cat-school-text: #065f46;
+    --cat-other-bg: #ede9fe; --cat-other-border: #ddd6fe; --cat-other-text: #5b21b6;
+  }
+  .dark {
+    --bg: #12091f;
+    --surface: #1e1030;
+    --surface2: #2a1a45;
+    --sidebar-bg: #0d0618;
+    --sidebar-hover: #1e1030;
+    --accent: #a78bfa;
+    --accent2: #7c3aed;
+    --text: #f3effe;
+    --text2: #9d8ec4;
+    --border: #2a1a45;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.6);
+    --cat-home-bg: #4a1942; --cat-home-border: #6d2060; --cat-home-text: #f9a8d4;
+    --cat-work-bg: #1e3a5f; --cat-work-border: #2563a8; --cat-work-text: #93c5fd;
+    --cat-event-bg: #451a03; --cat-event-border: #78350f; --cat-event-text: #fcd34d;
+    --cat-school-bg: #064e3b; --cat-school-border: #065f46; --cat-school-text: #6ee7b7;
+    --cat-other-bg: #2e1065; --cat-other-border: #4c1d95; --cat-other-text: #c4b5fd;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); transition: background var(--transition), color var(--transition); }
+
+  /* ── LANDING ── */
+  #landing {
+    height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #1a0a2e 0%, #2d1a4e 45%, #1a0a38 100%);
+  }
+  .orb { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; }
+  .orb1 { width: 520px; height: 520px; background: rgba(167,139,250,0.22); top: -120px; left: -120px; }
+  .orb2 { width: 420px; height: 420px; background: rgba(249,168,212,0.16); bottom: -90px; right: -90px; }
+  .orb3 { width: 280px; height: 280px; background: rgba(147,197,253,0.14); top: 38%; left: 58%; }
+  .landing-dots {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(196,181,253,0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  .landing-content { text-align: center; z-index: 1; animation: fadeUp 0.9s ease both; padding: 2rem; }
+  .landing-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.8rem, 9vw, 6.8rem);
+    color: #fff; letter-spacing: -0.02em; line-height: 1; margin-bottom: 0.45rem;
+  }
+  .landing-logo span { color: #c4b5fd; font-style: italic; }
+  .landing-tagline { font-size: clamp(1rem, 2.4vw, 1.2rem); color: #c4b5fd; letter-spacing: 0.05em; font-weight: 400; margin-bottom: 0.4rem; }
+  .landing-sub { font-size: clamp(0.8rem, 1.4vw, 0.95rem); color: #5c4a7a; margin-bottom: 3rem; }
+  .btn-go {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
+    color: #fff; border: none; border-radius: 100px;
+    padding: 1rem 2.8rem; font-size: 1.05rem; font-weight: 800;
+    font-family: 'Nunito', sans-serif; cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 8px 32px rgba(167,139,250,0.5);
+    letter-spacing: 0.02em;
+  }
+  .btn-go:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(167,139,250,0.65); }
+
+  /* ── APP ── */
+  #app { display: none; height: 100vh; flex-direction: row; }
+  #app.visible { display: flex; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 240px; min-width: 240px;
+    background: var(--sidebar-bg); display: flex; flex-direction: column;
+    z-index: 10; border-right: 1px solid rgba(167,139,250,0.08);
+  }
+  .sidebar-header { padding: 1.8rem 1.5rem 1.1rem; border-bottom: 1px solid rgba(167,139,250,0.08); }
+  .sidebar-logo { font-family: 'Playfair Display', serif; font-size: 1.55rem; color: #fff; }
+  .sidebar-logo span { color: #c4b5fd; font-style: italic; }
+  .sidebar-desc { font-size: 0.69rem; color: #5c4a7a; margin-top: 3px; }
+  nav { flex: 1; padding: 0.9rem 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1.5rem; cursor: pointer;
+    font-size: 0.875rem; font-weight: 600; color: #7c6fa0;
+    transition: background var(--transition), color var(--transition);
+    position: relative; user-select: none;
+  }
+  .nav-item:hover { background: var(--sidebar-hover); color: #c4b5fd; }
+  .nav-item.active { color: #fff; background: rgba(167,139,250,0.1); }
+  .nav-item.active::before {
+    content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+    width: 3px; background: linear-gradient(180deg, #a78bfa, #ec4899); border-radius: 0 3px 3px 0;
+  }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto; background: linear-gradient(135deg, #a78bfa, #ec4899);
+    color: #fff; font-size: 0.68rem; font-weight: 800;
+    padding: 2px 8px; border-radius: 100px; min-width: 20px; text-align: center;
+  }
+  .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(167,139,250,0.07); }
+  .sidebar-date { font-size: 0.7rem; color: #5c4a7a; line-height: 1.5; }
+
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar {
+    padding: 1.1rem 2rem; background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background var(--transition), border-color var(--transition); min-height: 66px;
+  }
+  .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.45rem; }
+  .btn-add {
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.58rem 1.25rem; border-radius: 100px;
+    background: linear-gradient(135deg, #a78bfa, #ec4899); color: #fff; border: none;
+    cursor: pointer; font-size: 0.875rem; font-weight: 800; font-family: 'Nunito', sans-serif;
+    transition: transform 0.14s, box-shadow 0.18s; box-shadow: 0 3px 14px rgba(167,139,250,0.4);
+  }
+  .btn-add:hover { transform: translateY(-1px); box-shadow: 0 7px 22px rgba(167,139,250,0.55); }
+  .content { flex: 1; overflow-y: auto; padding: 1.8rem 2rem; }
+
+  /* ── SECTIONS ── */
+  .section { display: none; animation: fadeUp 0.32s ease both; }
+  .section.active { display: block; }
+
+  /* ── STATS ── */
+  .stats-row { display: flex; gap: 0.8rem; margin-bottom: 1.6rem; flex-wrap: wrap; }
+  .stat-chip {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 0.8rem 1.3rem; box-shadow: var(--shadow); min-width: 105px;
+  }
+  .stat-chip-val { font-family: 'Playfair Display', serif; font-size: 1.65rem; color: var(--accent); }
+  .stat-chip-label { font-size: 0.69rem; color: var(--text2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ── TASK CARDS ── */
+  .tasks-list { display: flex; flex-direction: column; gap: 0.65rem; }
+  .task-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 0.9rem 1.1rem;
+    display: flex; align-items: flex-start; gap: 0.9rem;
+    box-shadow: var(--shadow); transition: box-shadow 0.2s, opacity 0.4s; position: relative;
+  }
+  .task-card:hover { box-shadow: var(--shadow-lg); }
+  .task-card.done { opacity: 0.48; }
+  .task-card.done .task-title { text-decoration: line-through; color: var(--text2); }
+  .task-check {
+    width: 21px; height: 21px; min-width: 21px; border-radius: 7px;
+    border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.18s, border-color 0.18s; margin-top: 1px; background: var(--surface2);
+  }
+  .task-check.checked { background: linear-gradient(135deg, #a78bfa, #34d399); border-color: transparent; }
+  .task-check svg { display: none; width: 12px; height: 12px; color: #fff; }
+  .task-check.checked svg { display: block; }
+  .task-body { flex: 1; min-width: 0; }
+  .task-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.18rem; }
+  .task-note { font-size: 0.78rem; color: var(--text2); margin-bottom: 0.35rem; white-space: pre-wrap; word-break: break-word; }
+  .task-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .task-tag { font-size: 0.67rem; font-weight: 700; padding: 2px 9px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.04em; border: 1px solid transparent; }
+  .tag-home   { background: var(--cat-home-bg);   color: var(--cat-home-text);   border-color: var(--cat-home-border); }
+  .tag-work   { background: var(--cat-work-bg);   color: var(--cat-work-text);   border-color: var(--cat-work-border); }
+  .tag-event  { background: var(--cat-event-bg);  color: var(--cat-event-text);  border-color: var(--cat-event-border); }
+  .tag-school { background: var(--cat-school-bg); color: var(--cat-school-text); border-color: var(--cat-school-border); }
+  .tag-other  { background: var(--cat-other-bg);  color: var(--cat-other-text);  border-color: var(--cat-other-border); }
+  .task-date-tag { font-size: 0.7rem; color: var(--text2); font-weight: 600; }
+  .task-actions { display: flex; gap: 0.3rem; opacity: 0; transition: opacity 0.18s; }
+  .task-card:hover .task-actions { opacity: 1; }
+  .btn-task-action {
+    width: 27px; height: 27px; border-radius: 7px; background: none; border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    color: var(--text2); transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .btn-task-action:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .btn-task-action svg { width: 13px; height: 13px; }
+  .tasks-group-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin: 1.3rem 0 0.6rem; }
+  .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--text2); }
+  .empty-state svg { width: 42px; height: 42px; margin-bottom: 0.7rem; opacity: 0.28; }
+  .empty-state p { font-size: 0.88rem; }
+
+  /* ── CATEGORIES ── */
+  .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 1rem; margin-bottom: 1.6rem; }
+  .cat-card {
+    border-radius: 20px; padding: 1.5rem 1.2rem 1.3rem; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, outline 0.1s;
+    user-select: none; position: relative; overflow: hidden; border: 2px solid transparent;
+  }
+  .cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .cat-card.selected { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-width: 2px; }
+  .cat-home   { background: linear-gradient(140deg,#fce7f3,#fdf2f8); }
+  .cat-work   { background: linear-gradient(140deg,#dbeafe,#eff6ff); }
+  .cat-event  { background: linear-gradient(140deg,#fef3c7,#fffbeb); }
+  .cat-school { background: linear-gradient(140deg,#d1fae5,#ecfdf5); }
+  .cat-other  { background: linear-gradient(140deg,#ede9fe,#f5f3ff); }
+  .dark .cat-home   { background: linear-gradient(140deg,#4a1942,#3d1035); }
+  .dark .cat-work   { background: linear-gradient(140deg,#1e3a5f,#162b47); }
+  .dark .cat-event  { background: linear-gradient(140deg,#451a03,#360f00); }
+  .dark .cat-school { background: linear-gradient(140deg,#064e3b,#053628); }
+  .dark .cat-other  { background: linear-gradient(140deg,#2e1065,#200b4a); }
+  .cat-home.selected   { border-color: #ec4899; }
+  .cat-work.selected   { border-color: #3b82f6; }
+  .cat-event.selected  { border-color: #f59e0b; }
+  .cat-school.selected { border-color: #10b981; }
+  .cat-other.selected  { border-color: #8b5cf6; }
+  .cat-icon-wrap {
+    width: 44px; height: 44px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 0.85rem;
+  }
+  .cat-home   .cat-icon-wrap { background: rgba(236,72,153,0.14); }
+  .cat-work   .cat-icon-wrap { background: rgba(59,130,246,0.14); }
+  .cat-event  .cat-icon-wrap { background: rgba(245,158,11,0.14); }
+  .cat-school .cat-icon-wrap { background: rgba(16,185,129,0.14); }
+  .cat-other  .cat-icon-wrap { background: rgba(139,92,246,0.14); }
+  .cat-name { font-weight: 800; font-size: 1rem; }
+  .cat-home   .cat-name { color: #9d174d; }
+  .cat-work   .cat-name { color: #1e40af; }
+  .cat-event  .cat-name { color: #92400e; }
+  .cat-school .cat-name { color: #065f46; }
+  .cat-other  .cat-name { color: #5b21b6; }
+  .dark .cat-home   .cat-name { color: #f9a8d4; }
+  .dark .cat-work   .cat-name { color: #93c5fd; }
+  .dark .cat-event  .cat-name { color: #fcd34d; }
+  .dark .cat-school .cat-name { color: #6ee7b7; }
+  .dark .cat-other  .cat-name { color: #c4b5fd; }
+
+  /* ── CAT PANEL ── */
+  .cat-panel {
+    border-radius: 22px; padding: 2rem 1.8rem;
+    animation: fadeUp 0.3s ease both; border: 1.5px solid transparent;
+  }
+  .cat-panel-home   { background: linear-gradient(150deg,#fce7f3 0%,#fff 80%); border-color: var(--cat-home-border); }
+  .cat-panel-work   { background: linear-gradient(150deg,#dbeafe 0%,#fff 80%); border-color: var(--cat-work-border); }
+  .cat-panel-event  { background: linear-gradient(150deg,#fef3c7 0%,#fff 80%); border-color: var(--cat-event-border); }
+  .cat-panel-school { background: linear-gradient(150deg,#d1fae5 0%,#fff 80%); border-color: var(--cat-school-border); }
+  .cat-panel-other  { background: linear-gradient(150deg,#ede9fe 0%,#fff 80%); border-color: var(--cat-other-border); }
+  .dark .cat-panel-home   { background: linear-gradient(150deg,#4a1942,#1e1030); }
+  .dark .cat-panel-work   { background: linear-gradient(150deg,#1e3a5f,#1e1030); }
+  .dark .cat-panel-event  { background: linear-gradient(150deg,#451a03,#1e1030); }
+  .dark .cat-panel-school { background: linear-gradient(150deg,#064e3b,#1e1030); }
+  .dark .cat-panel-other  { background: linear-gradient(150deg,#2e1065,#1e1030); }
+  .cat-panel-top { display: flex; align-items: flex-start; gap: 1.2rem; margin-bottom: 1.2rem; }
+  .cat-panel-emoji-big { font-size: 3rem; line-height: 1; }
+  .cat-panel-tagline { font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 0.35rem; color: var(--text); }
+  .cat-panel-desc { font-size: 0.84rem; color: var(--text2); line-height: 1.7; }
+  .btn-cat-add {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.65rem 1.5rem; border-radius: 100px; color: #fff; border: none;
+    cursor: pointer; font-size: 0.875rem; font-weight: 800;
+    font-family: 'Nunito', sans-serif; transition: transform 0.14s, box-shadow 0.18s;
+    margin-bottom: 1.6rem; letter-spacing: 0.01em;
+  }
+  .btn-cat-add:hover { transform: translateY(-2px); }
+  .btn-cat-add-home   { background: linear-gradient(135deg,#ec4899,#f472b6); box-shadow: 0 4px 16px rgba(236,72,153,0.38); }
+  .btn-cat-add-work   { background: linear-gradient(135deg,#3b82f6,#60a5fa); box-shadow: 0 4px 16px rgba(59,130,246,0.38); }
+  .btn-cat-add-event  { background: linear-gradient(135deg,#f59e0b,#fbbf24); box-shadow: 0 4px 16px rgba(245,158,11,0.38); }
+  .btn-cat-add-school { background: linear-gradient(135deg,#10b981,#34d399); box-shadow: 0 4px 16px rgba(16,185,129,0.38); }
+  .btn-cat-add-other  { background: linear-gradient(135deg,#8b5cf6,#a78bfa); box-shadow: 0 4px 16px rgba(139,92,246,0.38); }
+  .cat-tasks-label { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 0.8rem; color: var(--text); }
+
+  /* ── MOTIVATION ── */
+  .motivation-hero {
+    background: linear-gradient(135deg,#2d1a4e 0%,#1e0a3c 60%,#3d0a4e 100%);
+    border-radius: 22px; padding: 3rem 2.4rem; margin-bottom: 2rem;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .motivation-hero::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse 70% 60% at 50% 100%,rgba(167,139,250,0.28),transparent);
+  }
+  .mot-sparkle { font-size: 2.2rem; display: block; margin-bottom: 1rem; position: relative; z-index: 1; }
+  .motivation-quote {
+    font-family: 'Playfair Display', serif; font-size: clamp(1.15rem,3vw,1.7rem);
+    color: #fff; line-height: 1.55; margin-bottom: 0.8rem; z-index:1; position:relative; font-style:italic;
+  }
+  .motivation-author { font-size: 0.85rem; color: #9d8ec4; z-index:1; position:relative; font-weight:700; letter-spacing:0.04em; }
+  .btn-new-quote {
+    margin-top: 1.6rem; padding: 0.62rem 1.7rem;
+    background: rgba(255,255,255,0.09); color: #c4b5fd;
+    border: 1px solid rgba(196,181,253,0.28); border-radius: 100px;
+    font-family: 'Nunito', sans-serif; font-size: 0.875rem; font-weight: 700;
+    cursor: pointer; z-index:1; position:relative; transition: background 0.18s; backdrop-filter: blur(4px);
+  }
+  .btn-new-quote:hover { background: rgba(255,255,255,0.18); }
+  .motivation-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(210px,1fr)); gap: 1rem; }
+  .tip-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.3rem; box-shadow: var(--shadow); }
+  .tip-emoji { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .tip-card h4 { font-weight: 800; margin-bottom: 0.35rem; font-size: 0.88rem; }
+  .tip-card p { font-size: 0.78rem; color: var(--text2); line-height: 1.65; }
+
+  /* ── SETTINGS ── */
+  .settings-section { margin-bottom: 2rem; }
+  .settings-section h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; margin-bottom: 0.8rem; }
+  .setting-row {
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+    padding: 1rem 1.2rem; margin-bottom: 0.6rem;
+    display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow);
+  }
+  .setting-info h4 { font-weight: 700; font-size: 0.9rem; }
+  .setting-info p { font-size: 0.77rem; color: var(--text2); margin-top: 2px; }
+  .toggle { width: 46px; height: 26px; border-radius: 100px; background: var(--border); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+  .toggle.on { background: linear-gradient(135deg,#a78bfa,#ec4899); }
+  .toggle::after { content:''; position:absolute; width:20px; height:20px; border-radius:50%; background:#fff; top:3px; left:3px; transition:left 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.18); }
+  .toggle.on::after { left: 23px; }
+  .btn-empty-bin { background: var(--danger); color:#fff; border:none; border-radius:10px; padding:0.5rem 1.2rem; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:'Nunito',sans-serif; transition:background 0.15s; }
+  .btn-empty-bin:hover { background: #e11d48; }
+
+  /* ── BIN ── */
+  .bin-notice { background:var(--surface); border:1.5px dashed var(--border); border-radius:var(--radius); padding:1rem 1.2rem; margin-bottom:1.2rem; font-size:0.82rem; color:var(--text2); text-align:center; }
+  .btn-restore { background:none; border:1.5px solid var(--accent); color:var(--accent); border-radius:8px; padding:3px 11px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:'Nunito',sans-serif; transition:background 0.15s; }
+  .btn-restore:hover { background:rgba(167,139,250,0.1); }
+
+  /* ── TOAST ── */
+  .toast-container { position:fixed; top:1.2rem; right:1.2rem; display:flex; flex-direction:column; gap:0.6rem; z-index:1000; pointer-events:none; }
+  .toast {
+    background: #1e1030; color:#e8d5fd; border-radius:12px; padding:0.8rem 1.2rem;
+    font-size:0.84rem; font-weight:600; box-shadow:0 8px 30px rgba(0,0,0,0.4);
+    pointer-events:all; display:flex; align-items:center; gap:0.5rem;
+    animation:toastIn 0.3s cubic-bezier(.4,0,.2,1) both; border-left:3px solid var(--accent); max-width:290px;
+  }
+  .toast.success { border-left-color: var(--success); }
+  .toast.danger  { border-left-color: var(--danger); }
+  .toast.exit { animation: toastOut 0.28s ease forwards; }
+
+  /* ── MODAL ── */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(18,9,31,0.72); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(7px); }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--surface); border-radius:22px; padding:2.2rem; max-width:440px; width:93%; box-shadow:var(--shadow-lg); animation:fadeUp 0.3s ease both; border:1px solid var(--border); }
+  .modal h3 { font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:1.3rem; }
+  .modal-fields { display:flex; flex-direction:column; gap:0.7rem; }
+  .modal-fields input, .modal-fields select, .modal-fields textarea {
+    background:var(--surface2); border:1.5px solid var(--border); border-radius:10px;
+    padding:0.62rem 0.95rem; font-family:'Nunito',sans-serif; font-size:0.875rem;
+    color:var(--text); outline:none; transition:border-color 0.18s; width:100%;
+  }
+  .modal-fields input:focus, .modal-fields select:focus, .modal-fields textarea:focus { border-color:var(--accent); }
+  .modal-fields textarea { resize:none; height:70px; }
+  .modal-row { display:flex; gap:0.6rem; }
+  .modal-row > * { flex:1; }
+  .modal-actions { display:flex; gap:0.6rem; justify-content:flex-end; margin-top:1.4rem; }
+  .btn-cancel { padding:0.58rem 1.1rem; border-radius:10px; background:var(--surface2); border:1.5px solid var(--border); cursor:pointer; font-size:0.875rem; font-family:'Nunito',sans-serif; color:var(--text); font-weight:700; transition:background 0.15s; }
+  .btn-cancel:hover { background:var(--border); }
+  .btn-confirm-add { padding:0.58rem 1.3rem; border-radius:10px; background:linear-gradient(135deg,#a78bfa,#ec4899); color:#fff; border:none; cursor:pointer; font-size:0.875rem; font-weight:800; font-family:'Nunito',sans-serif; }
+  .btn-confirm { padding:0.58rem 1.1rem; border-radius:10px; background:var(--danger); color:#fff; border:none; cursor:pointer; font-size:0.875rem; font-weight:700; font-family:'Nunito',sans-serif; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes toastIn { from{opacity:0;transform:translateX(36px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes toastOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(36px)} }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 100px; }
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <div class="landing-dots"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="landing-content">
+    <div class="landing-logo">Sort<span>edly</span></div>
+    <p class="landing-tagline">Organize better, Stress less</p>
+    <p class="landing-sub">Your simple planner for daily life</p>
+    <button class="btn-go" onclick="enterApp()">
+      Let's go
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">Sort<span>edly</span></div>
+      <div class="sidebar-desc">Organize better, stress less</div>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="navigate('today',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Today <span class="nav-badge" id="today-badge">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('all',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg>
+        All Tasks <span class="nav-badge" id="all-badge">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('categories',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+        Categories
+      </div>
+      <div class="nav-item" onclick="navigate('motivation',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Motivation
+      </div>
+      <div class="nav-item" onclick="navigate('bin',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        Bin <span class="nav-badge" id="bin-badge" style="display:none">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('settings',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </div>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-date" id="sidebar-date"></div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Today</div>
+      <button class="btn-add" onclick="openAddModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Task
+      </button>
+    </div>
+    <div class="content">
+
+      <!-- TODAY -->
+      <div class="section active" id="sec-today">
+        <div class="stats-row" id="today-stats"></div>
+        <div class="tasks-list" id="today-list"></div>
+      </div>
+
+      <!-- ALL TASKS -->
+      <div class="section" id="sec-all">
+        <div class="stats-row" id="all-stats"></div>
+        <div id="all-list"></div>
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="section" id="sec-categories">
+        <div class="categories-grid">
+          <div class="cat-card cat-home"   onclick="selectCat('home',this)"   id="cat-home">
+            <div class="cat-icon-wrap">🏠</div><div class="cat-name">Home</div>
+          </div>
+          <div class="cat-card cat-work"   onclick="selectCat('work',this)"   id="cat-work">
+            <div class="cat-icon-wrap">💼</div><div class="cat-name">Work</div>
+          </div>
+          <div class="cat-card cat-event"  onclick="selectCat('event',this)"  id="cat-event">
+            <div class="cat-icon-wrap">🎉</div><div class="cat-name">Event</div>
+          </div>
+          <div class="cat-card cat-school" onclick="selectCat('school',this)" id="cat-school">
+            <div class="cat-icon-wrap">🎓</div><div class="cat-name">School</div>
+          </div>
+          <div class="cat-card cat-other"  onclick="selectCat('other',this)"  id="cat-other">
+            <div class="cat-icon-wrap">📌</div><div class="cat-name">Other</div>
+          </div>
+        </div>
+        <div id="cat-panel-area"></div>
+      </div>
+
+      <!-- MOTIVATION -->
+      <div class="section" id="sec-motivation">
+        <div class="motivation-hero">
+          <span class="mot-sparkle">✨</span>
+          <div class="motivation-quote" id="mot-quote"></div>
+          <div class="motivation-author" id="mot-author"></div>
+          <button class="btn-new-quote" onclick="newQuote()">New Quote ✨</button>
+        </div>
+        <div class="motivation-grid">
+          <div class="tip-card"><div class="tip-emoji">🌅</div><h4>Start with one task</h4><p>Don't overwhelm yourself. Pick the single most important task and begin. Momentum follows action.</p></div>
+          <div class="tip-card"><div class="tip-emoji">⏱️</div><h4>Two-minute rule</h4><p>If a task takes less than two minutes, do it immediately. Small wins build big confidence.</p></div>
+          <div class="tip-card"><div class="tip-emoji">🎯</div><h4>Focus on progress</h4><p>You don't need to be perfect. A little done every day adds up to something extraordinary.</p></div>
+          <div class="tip-card"><div class="tip-emoji">🧠</div><h4>Rest is productive</h4><p>Your brain needs recovery. Taking breaks isn't laziness — it's how you sustain performance.</p></div>
+          <div class="tip-card"><div class="tip-emoji">📝</div><h4>Write it down</h4><p>Your brain is for thinking, not storage. Offload tasks into Sortedly and stay clear-headed.</p></div>
+          <div class="tip-card"><div class="tip-emoji">🌿</div><h4>Celebrate small wins</h4><p>Every checked-off task is a victory. You're further than you were yesterday.</p></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="section" id="sec-settings">
+        <div class="settings-section">
+          <h3>Appearance</h3>
+          <div class="setting-row">
+            <div class="setting-info"><h4>Dark Mode</h4><p>Switch to a dark, easy-on-the-eyes theme</p></div>
+            <div class="toggle" id="toggle-dark" onclick="toggleDark()"></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3>Notifications</h3>
+          <div class="setting-row">
+            <div class="setting-info"><h4>Enable Notifications</h4><p>Get reminders for your scheduled tasks</p></div>
+            <div class="toggle" id="toggle-notif" onclick="toggleNotif()"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><h4>Daily Reminder</h4><p>Receive a morning summary of today's tasks</p></div>
+            <div class="toggle" id="toggle-daily" onclick="toggleSetting('daily')"></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3>Data</h3>
+          <div class="setting-row">
+            <div class="setting-info"><h4>Auto-save</h4><p>Tasks are saved automatically as you add them</p></div>
+            <div style="font-size:0.8rem;color:var(--success);font-weight:800;">✓ Always On</div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><h4>Clear All Data</h4><p>Permanently delete all tasks and settings</p></div>
+            <button class="btn-empty-bin" onclick="confirmClearAll()">Clear All</button>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3>About</h3>
+          <div class="setting-row">
+            <div class="setting-info"><h4>Sortedly v1.0</h4><p>Your simple planner for daily life · Built with ♥</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BIN -->
+      <div class="section" id="sec-bin">
+        <div class="bin-notice">🗑️ Tasks deleted recently are stored here. Restore them anytime.</div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+          <button class="btn-empty-bin" onclick="emptyBin()">Empty Bin</button>
+        </div>
+        <div class="tasks-list" id="bin-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Add Task Modal -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h3>Add New Task</h3>
+    <div class="modal-fields">
+      <input type="text" id="inp-title" placeholder="Task name *" />
+      <textarea id="inp-note" placeholder="Notes (optional)"></textarea>
+      <div class="modal-row">
+        <input type="date" id="inp-date" />
+        <select id="inp-cat">
+          <option value="home">🏠 Home</option>
+          <option value="work">💼 Work</option>
+          <option value="event">🎉 Event</option>
+          <option value="school">🎓 School</option>
+          <option value="other">📌 Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+      <button class="btn-confirm-add" onclick="addTask()">Add Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p id="confirm-msg" style="font-size:0.875rem;color:var(--text2);"></p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-confirm" id="confirm-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let tasks=[], bin=[], settings={dark:false,notif:false,daily:false};
+let selectedCat=null, currentSection='today', confirmCallback=null, quoteIdx=0;
+
+const CAT_META = {
+  home:   {icon:'🏠', label:'Home',   color:'home',   tagline:'Plan your home chores & daily routines', desc:"From cleaning schedules to grocery lists — keep your home life sorted, one task at a time. Let us help make your space a calm, organised haven you love coming back to."},
+  work:   {icon:'💼', label:'Work',   color:'work',   tagline:'Stay on top of your work goals', desc:"Deadlines, meetings, projects and priorities — organise your professional life with clarity. We'll help you stay focused and consistently ahead of the curve."},
+  event:  {icon:'🎉', label:'Event',  color:'event',  tagline:'Plan an event with our help', desc:"Birthdays, weddings, parties or meetups — great events don't happen by accident. Let's plan every detail together so nothing slips through the cracks and every moment counts."},
+  school: {icon:'🎓', label:'School', color:'school', tagline:'Organise your academic life', desc:"Assignments, exams, study sessions and staff deadlines — keep your school tasks in one place so you can focus on learning and teaching, not stressing."},
+  other:  {icon:'📌', label:'Other',  color:'other',  tagline:'Capture everything else here', desc:"Got tasks that don't fit neatly anywhere? Drop them here. No task is too small or too random — we've got a spot for everything on your mind."},
+};
+
+const QUOTES = [
+  {q:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+  {q:"You don't have to be great to start, but you have to start to be great.",a:"Zig Ziglar"},
+  {q:"Small daily improvements over time lead to stunning results.",a:"Robin Sharma"},
+  {q:"It always seems impossible until it's done.",a:"Nelson Mandela"},
+  {q:"Productivity is never an accident. It is always the result of commitment.",a:"Paul J. Meyer"},
+  {q:"Focus on being productive instead of busy.",a:"Tim Ferriss"},
+  {q:"Done is better than perfect.",a:"Sheryl Sandberg"},
+  {q:"Your time is limited, so don't waste it living someone else's life.",a:"Steve Jobs"},
+  {q:"Action is the foundational key to all success.",a:"Pablo Picasso"},
+  {q:"Schedule your priorities, not your schedule.",a:"Stephen Covey"},
+  {q:"Believe you can and you're halfway there.",a:"Theodore Roosevelt"},
+  {q:"You are capable of more than you know.",a:"Anonymous"},
+];
+
+function save(){localStorage.setItem('sortedly_tasks',JSON.stringify(tasks));localStorage.setItem('sortedly_bin',JSON.stringify(bin));localStorage.setItem('sortedly_settings',JSON.stringify(settings));}
+function load(){
+  try{tasks=JSON.parse(localStorage.getItem('sortedly_tasks'))||[];}catch{tasks=[];}
+  try{bin=JSON.parse(localStorage.getItem('sortedly_bin'))||[];}catch{bin=[];}
+  try{settings=Object.assign({dark:false,notif:false,daily:false},JSON.parse(localStorage.getItem('sortedly_settings')));}catch{}
+  if(localStorage.getItem('sortedly_seen')){document.getElementById('landing').style.display='none';enterAppDirect();}
+}
+
+function enterApp(){
+  localStorage.setItem('sortedly_seen','1');
+  const l=document.getElementById('landing');
+  l.style.transition='opacity 0.5s';l.style.opacity='0';
+  setTimeout(()=>{l.style.display='none';enterAppDirect();},500);
+}
+function enterAppDirect(){
+  document.getElementById('app').classList.add('visible');
+  applySettings();updateSidebarDate();render();
+}
+
+function navigate(s,el){
+  currentSection=s;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));el.classList.add('active');
+  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+  document.getElementById('sec-'+s).classList.add('active');
+  const t={today:'Today',all:'All Tasks',categories:'Categories',motivation:'Motivation',settings:'Settings',bin:'Bin'};
+  document.getElementById('topbar-title').textContent=t[s]||s;
+  render();
+}
+
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function fmtDate(d){if(!d)return'';const[y,m,day]=d.split('-');const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return`${parseInt(day)} ${mo[parseInt(m)-1]}`;}
+function updateSidebarDate(){document.getElementById('sidebar-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+
+function openAddModal(cat){
+  document.getElementById('inp-title').value='';
+  document.getElementById('inp-note').value='';
+  document.getElementById('inp-date').value=todayStr();
+  document.getElementById('inp-cat').value=cat||'home';
+  document.getElementById('add-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('inp-title').focus(),100);
+}
+function closeAddModal(){document.getElementById('add-modal').classList.remove('open');}
+function confirmModal(title,msg,cb){document.getElementById('confirm-title').textContent=title;document.getElementById('confirm-msg').textContent=msg;confirmCallback=cb;document.getElementById('confirm-modal').classList.add('open');}
+function closeConfirm(){document.getElementById('confirm-modal').classList.remove('open');confirmCallback=null;}
+document.getElementById('confirm-btn').onclick=()=>{if(confirmCallback)confirmCallback();closeConfirm();};
+
+function addTask(){
+  const title=document.getElementById('inp-title').value.trim();
+  if(!title){showToast('⚠️ Please enter a task name.','danger');return;}
+  tasks.push({id:Date.now().toString(),title,note:document.getElementById('inp-note').value.trim(),date:document.getElementById('inp-date').value||todayStr(),cat:document.getElementById('inp-cat').value,done:false,createdAt:Date.now()});
+  save();closeAddModal();render();showToast('📝 Task added successfully!','success');
+}
+function toggleDone(id){const t=tasks.find(t=>t.id===id);if(!t)return;t.done=!t.done;save();render();if(t.done)showToast('✅ Task completed! Great job!','success');}
+function deleteTask(id){const i=tasks.findIndex(t=>t.id===id);if(i===-1)return;const[t]=tasks.splice(i,1);t.deletedAt=Date.now();bin.push(t);save();render();showToast('🗑️ Task moved to bin.','');}
+function restoreTask(id){const i=bin.findIndex(t=>t.id===id);if(i===-1)return;const[t]=bin.splice(i,1);delete t.deletedAt;tasks.push(t);save();render();showToast('♻️ Task restored!','success');}
+function emptyBin(){if(!bin.length)return;confirmModal('Empty Bin?','All deleted tasks will be permanently removed.',()=>{bin=[];save();render();showToast('🗑️ Bin emptied.','danger');});}
+
+function applySettings(){
+  document.body.classList.toggle('dark',settings.dark);
+  document.getElementById('toggle-dark').classList.toggle('on',settings.dark);
+  document.getElementById('toggle-notif').classList.toggle('on',settings.notif);
+  document.getElementById('toggle-daily').classList.toggle('on',settings.daily);
+}
+function toggleDark(){settings.dark=!settings.dark;save();applySettings();showToast(settings.dark?'🌙 Dark mode on':'☀️ Light mode on','');}
+function toggleNotif(){
+  if(!settings.notif&&'Notification'in window){Notification.requestPermission().then(p=>{settings.notif=p==='granted';save();applySettings();showToast(settings.notif?'🔔 Notifications enabled!':'⚠️ Notifications blocked.',settings.notif?'success':'danger');});}
+  else{settings.notif=!settings.notif;save();applySettings();}
+}
+function toggleSetting(k){settings[k]=!settings[k];save();applySettings();}
+function confirmClearAll(){confirmModal('Clear All Data?','This will permanently delete all tasks and settings.',()=>{tasks=[];bin=[];settings={dark:false,notif:false,daily:false};save();applySettings();render();showToast('🗑️ All data cleared.','danger');});}
+
+function selectCat(cat,el){
+  const same=selectedCat===cat;
+  document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('selected'));
+  const pa=document.getElementById('cat-panel-area');
+  if(same){selectedCat=null;pa.innerHTML='';return;}
+  selectedCat=cat;el.classList.add('selected');renderCatPanel();
+}
+function renderCatPanel(){
+  if(!selectedCat)return;
+  const m=CAT_META[selectedCat];
+  const ct=tasks.filter(t=>t.cat===selectedCat);
+  document.getElementById('cat-panel-area').innerHTML=`
+    <div class="cat-panel cat-panel-${m.color}">
+      <div class="cat-panel-top">
+        <div class="cat-panel-emoji-big">${m.icon}</div>
+        <div>
+          <div class="cat-panel-tagline">${m.tagline}</div>
+          <div class="cat-panel-desc">${m.desc}</div>
+        </div>
+      </div>
+      <button class="btn-cat-add btn-cat-add-${m.color}" onclick="openAddModal('${selectedCat}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Now
+      </button>
+      ${ct.length
+        ?`<div class="cat-tasks-label">Your ${m.label} Tasks</div><div class="tasks-list">${ct.map(t=>taskCardHTML(t)).join('')}</div>`
+        :`<div class="empty-state" style="padding:1rem 0 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>No ${m.label.toLowerCase()} tasks yet — hit Add Now to get started!</p></div>`
+      }
+    </div>`;
+}
+
+function newQuote(){quoteIdx=(quoteIdx+1)%QUOTES.length;document.getElementById('mot-quote').textContent=`"${QUOTES[quoteIdx].q}"`;document.getElementById('mot-author').textContent=`— ${QUOTES[quoteIdx].a}`;}
+
+function render(){
+  const today=todayStr();
+  const todayTasks=tasks.filter(t=>t.date===today);
+  const doneToday=todayTasks.filter(t=>t.done).length;
+  const pending=tasks.filter(t=>!t.done).length;
+  document.getElementById('today-badge').textContent=todayTasks.filter(t=>!t.done).length;
+  document.getElementById('all-badge').textContent=pending;
+  const bb=document.getElementById('bin-badge');bb.textContent=bin.length;bb.style.display=bin.length?'inline':'none';
+
+  document.getElementById('today-stats').innerHTML=`
+    <div class="stat-chip"><div class="stat-chip-val">${todayTasks.length}</div><div class="stat-chip-label">Today's Tasks</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">${doneToday}</div><div class="stat-chip-label">Completed</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">${todayTasks.length-doneToday}</div><div class="stat-chip-label">Remaining</div></div>`;
+  document.getElementById('today-list').innerHTML=todayTasks.length?todayTasks.map(t=>taskCardHTML(t)).join(''):emptyHTML("No tasks for today. Hit '+ Add Task' to get started!");
+
+  document.getElementById('all-stats').innerHTML=`
+    <div class="stat-chip"><div class="stat-chip-val">${tasks.length}</div><div class="stat-chip-label">Total Tasks</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">${tasks.filter(t=>t.done).length}</div><div class="stat-chip-label">Completed</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">${pending}</div><div class="stat-chip-label">Pending</div></div>`;
+  const al=document.getElementById('all-list');
+  if(!tasks.length){al.innerHTML=emptyHTML("No tasks yet. Start by adding one!");}
+  else{
+    const g={};tasks.forEach(t=>{const k=t.date||today;if(!g[k])g[k]=[];g[k].push(t);});
+    al.innerHTML=Object.keys(g).sort().map(k=>{const lbl=k===today?'Today':k<today?`Past – ${fmtDate(k)}`:fmtDate(k);return`<div class="tasks-group-label">${lbl}</div><div class="tasks-list">${g[k].map(t=>taskCardHTML(t)).join('')}</div>`;}).join('');
+  }
+
+  if(selectedCat&&currentSection==='categories')renderCatPanel();
+  document.getElementById('bin-list').innerHTML=bin.length?bin.map(t=>binCardHTML(t)).join(''):emptyHTML('Bin is empty. Deleted tasks will appear here.');
+}
+
+function emptyHTML(m){return`<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>${m}</p></div>`;}
+function tc(c){return{home:'tag-home',work:'tag-work',event:'tag-event',school:'tag-school',other:'tag-other'}[c]||'tag-other';}
+function tl(c){return CAT_META[c]?.label||'Other';}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function taskCardHTML(t){
+  return`<div class="task-card ${t.done?'done':''}">
+    <div class="task-check ${t.done?'checked':''}" onclick="toggleDone('${t.id}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="task-body">
+      <div class="task-title">${esc(t.title)}</div>
+      ${t.note?`<div class="task-note">${esc(t.note)}</div>`:''}
+      <div class="task-meta"><span class="task-tag ${tc(t.cat)}">${tl(t.cat)}</span><span class="task-date-tag">${fmtDate(t.date)}</span></div>
+    </div>
+    <div class="task-actions">
+      <button class="btn-task-action" onclick="deleteTask('${t.id}')" title="Delete">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+function binCardHTML(t){
+  return`<div class="task-card done">
+    <div class="task-body">
+      <div class="task-title">${esc(t.title)}</div>
+      ${t.note?`<div class="task-note">${esc(t.note)}</div>`:''}
+      <div class="task-meta"><span class="task-tag ${tc(t.cat)}">${tl(t.cat)}</span><span class="task-date-tag">${fmtDate(t.date)}</span></div>
+    </div>
+    <div class="task-actions" style="opacity:1"><button class="btn-restore" onclick="restoreTask('${t.id}')">Restore</button></div>
+  </div>`;
+}
+
+function showToast(msg,type=''){
+  const tc2=document.getElementById('toast-container');
+  const d=document.createElement('div');d.className='toast '+type;d.innerHTML=msg;tc2.appendChild(d);
+  setTimeout(()=>{d.classList.add('exit');setTimeout(()=>d.remove(),300);},3200);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeAddModal();closeConfirm();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){if(document.getElementById('add-modal').classList.contains('open'))addTask();}
+});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  load();
+  document.getElementById('inp-date').value=todayStr();
+  quoteIdx=Math.floor(Math.random()*QUOTES.length);
+  document.getElementById('mot-quote').textContent=`"${QUOTES[quoteIdx].q}"`;
+  document.getElementById('mot-author').textContent=`— ${QUOTES[quoteIdx].a}`;
+});
+</script>
+</body>
+</html>
