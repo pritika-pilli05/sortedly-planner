@@ -19,7 +19,7 @@ HTML5
 CSS3
 JavaScript (Vanilla JS)
 
-📚 What I Learned
+What I Learned
 
 Through this project, I practiced:
 DOM manipulation
