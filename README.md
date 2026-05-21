@@ -8,37 +8,39 @@ The project was designed with a focus on simplicity, minimal UI, and beginner-fr
 
 Features
 
-Beautiful landing page with interactive welcome screen
-Sidebar dashboard navigation
-Task creation and deletion
-Color category tags for better organization
-Local storage support (tasks remain after refresh)
-Glassmorphism-inspired modern UI
-🛠️ Technologies Used
-HTML5
-CSS3
-JavaScript (Vanilla JS)
+- Beautiful landing page with interactive welcome screen
+- Sidebar dashboard navigation
+- Task creation and deletion
+- Color category tags for better organization
+- Local storage support (tasks remain after refresh)
+- Glassmorphism-inspired modern UI
+
+Technologies Used
+
+- HTML5
+- CSS3
+- JavaScript (Vanilla JS)
 
 What I Learned
 
-Through this project, I practiced:
-DOM manipulation
-Event handling
-Responsive web design
-CSS Flexbox
-Local storage
-Interactive UI/UX concepts
-Frontend project structuring
+- Through this project, I practiced:
+- DOM manipulation
+- Event handling
+- Responsive web design
+- CSS Flexbox
+- Local storage
+- Interactive UI/UX concepts
+- Frontend project structuring
 
 Future Improvements
 
-Weekly / Monthly planner layout
-Due date support
-Live task counter
-Drag-and-drop task management
-Calendar integration
-Task filtering and search
-Notifications and reminders
+- Weekly / Monthly planner layout
+- Due date support
+- Live task counter
+- Drag-and-drop task management
+- Calendar integration
+- Task filtering and search
+- Notifications and reminders
 
 Project Goal
 
